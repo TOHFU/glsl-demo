@@ -224,8 +224,8 @@ void main() {
 
 vertex/fragment shaderのルールとして、それぞれ、main()関数内でGLSLの組み込み変数に、下記の値を設定する必要があります。
 
-vertex shader : `gl_Position`に、頂点情報を設定
-fragment shader : `gl_FragColor`に、ピクセルの色情報を設定
+- vertex shader : `gl_Position`に、頂点情報を設定
+- fragment shader : `gl_FragColor`に、ピクセルの色情報を設定
 
 また、vertex shaderの方で、いきなりpositionという変数が使われていますが、これはattribute変数と呼ばれるものです。
 vertex shaderに渡される頂点情報の変数です。three.jsで定義されているので、詳しくは[Built-in uniforms and attributes](https://threejs.org/docs/#api/en/renderers/webgl/WebGLProgram) などを参考にしてみてください。
