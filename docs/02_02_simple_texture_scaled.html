@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>GLSL Sample - 02-02.simple texture scaled</title>
+  <style type="text/css">
+    html, body {
+      margin: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="container"></div>
+
+  <!-- vertex shaderをここに記述 -->
+  <script id="vertexShader" type="x-shader/x-vertex">
+    varying vec2 vUv; // fragment shaderに渡すための変数を定義
+
+    void main() {
+      vUv = uv; // 頂点ごとのuv座標を定義
+      gl_Position = vec4(position, 1.0);
+    }
+  </script>
+  <!-- /vertex shaderをここに記述 -->
+
+  <!-- fragment shaderをここに記述 -->
+  <script id="fragmentShader" type="x-shader/x-fragment">
+    varying vec2 vUv;          // テクスチャ座標(vertex shaderから)
+
+    uniform float u_time;      // 時間
+    uniform vec2 u_resolution; // 画面の解像度
+    uniform sampler2D u_tex;   // テクスチャ
+    uniform vec2 u_texsize;    // テクスチャのサイズ
+
+    /**
+     * vUvのテクスチャ座標をリサイズ(cover相当)に変換
+     *
+     * @param (res_size) 画面のサイズ
+     * @param (tex_size) テクスチャのサイズ
+     * @param vUvをリサイズした座標
+     */
+    vec2 coverd_texture(vec2 res_size, vec2 tex_size) {
+
+      float aspect_tex = tex_size.x / tex_size.y; // テクスチャのアスペクト比
+      float aspect_res = res_size.x / res_size.y; // 画面領域のアスペクト比
+      float ratio = aspect_res / aspect_tex;      // アスペクト比の比率
+
+      vec2 aspect = vec2( // 拡大率の計算(ここをmaxにしたらcontainっぽくなりますね)
+        min(ratio, 1.0),
+        min(1.0/ratio, 1.0)
+      );
+
+      return vec2( // リサイズ＋センタリング
+        vUv.x * aspect.x + (1.0 - aspect.x) * 0.5,
+        vUv.y * aspect.y + (1.0 - aspect.y) * 0.5
+      );
+
+    }
+
+    void main() {
+
+      // リサイズ
+      vec2 uv = coverd_texture(u_resolution, u_texsize);
+
+      gl_FragColor = texture2D(u_tex, uv);
+    }
+  </script>
+  <!-- /fragment shaderをここに記述 -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/98/three.min.js"></script>
+  <script src="./assets/js/main.js"></script>
+</body>
+
+</html>

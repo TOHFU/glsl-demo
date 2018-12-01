@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>GLSL Sample - 01.simple color</title>
+  <style type="text/css">
+    html, body {
+      margin: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="container"></div>
+
+  <!-- vertex shaderをここに記述 -->
+  <script id="vertexShader" type="x-shader/x-vertex">
+    void main() {
+      gl_Position = vec4(position, 1.0);
+    }
+  </script>
+  <!-- /vertex shaderをここに記述 -->
+
+  <!-- fragment shaderをここに記述 -->
+  <script id="fragmentShader" type="x-shader/x-fragment">
+    void main() {
+      gl_FragColor = vec4(1.0, 0.0, 1.0, 1.0); // ここで各ピクセルに固定の色を指定しています
+    }
+  </script>
+  <!-- /fragment shaderをここに記述 -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/98/three.min.js"></script>
+  <script src="./assets/js/main.js"></script>
+</body>
+
+</html>

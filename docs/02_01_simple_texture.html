@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>GLSL Sample - 02-01.simple texture</title>
+  <style type="text/css">
+    html, body {
+      margin: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="container"></div>
+
+  <!-- vertex shaderをここに記述 -->
+  <script id="vertexShader" type="x-shader/x-vertex">
+    varying vec2 vUv; // fragment shaderに渡すための変数を定義
+
+    void main() {
+      vUv = uv; // 頂点ごとのuv座標をそのまま設定
+      gl_Position = vec4(position, 1.0);
+    }
+  </script>
+  <!-- /vertex shaderをここに記述 -->
+
+  <!-- fragment shaderをここに記述 -->
+  <script id="fragmentShader" type="x-shader/x-fragment">
+    varying vec2 vUv;          // テクスチャ座標(vertex shaderから)
+
+    uniform sampler2D u_tex;   // テクスチャ
+
+    void main() {
+      gl_FragColor = texture2D(u_tex, vUv);
+    }
+  </script>
+  <!-- /fragment shaderをここに記述 -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/98/three.min.js"></script>
+  <script src="./assets/js/main.js"></script>
+</body>
+
+</html>
