@@ -2,6 +2,8 @@
 
 ## デモ01：板ポリゴンにfragment shaderで色をつけてみる
 
+view demo page : https://tohfu.github.io/glsl-demo/
+
 まずは、上記の板ポリを使って、シェーダーを使ってみるところまで、行ってみます。
 
 ここでは、板ポリゴンを作成しで3D空間上に配置し、これをカメラで撮影したものをcanvasに描画しています。
