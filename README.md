@@ -247,29 +247,25 @@ gl_FragColorにはどのピクセルであっても一律`vec4(1.0, 0.0, 1.0, 1.
 
 jsは共通です。htmlのvertex/fragment shaderの部分だけ修正します。
 
+vertex shader
 ```
-<!-- vertex shaderをここに記述 -->
-<script id="vertexShader" type="x-shader/x-vertex">
-  varying vec2 vUv; // fragment shaderに渡すための変数を定義
+varying vec2 vUv; // fragment shaderに渡すための変数を定義
 
-  void main() {
-    vUv = uv; // 頂点ごとのuv座標をそのまま設定
-    gl_Position = vec4(position, 1.0);
-  }
-</script>
-<!-- /vertex shaderをここに記述 -->
+void main() {
+  vUv = uv; // 頂点ごとのuv座標をそのまま設定
+  gl_Position = vec4(position, 1.0);
+}
+```
 
-<!-- fragment shaderをここに記述 -->
-<script id="fragmentShader" type="x-shader/x-fragment">
-  varying vec2 vUv;          // テクスチャ座標(vertex shaderから)
+fragment shader
+```
+varying vec2 vUv;          // テクスチャ座標(vertex shaderから)
 
-  uniform sampler2D u_tex;   // テクスチャ
+uniform sampler2D u_tex;   // テクスチャ
 
-  void main() {
-    gl_FragColor = texture2D(u_tex, vUv);
-  }
-</script>
-<!-- /fragment shaderをここに記述 -->
+void main() {
+  gl_FragColor = texture2D(u_tex, vUv);
+}
 ```
 
 #### varyng変数について
@@ -318,62 +314,65 @@ fragment shader側では、上記座標データ(vUv)と、テクスチャデー
 先ほどの[デモ02-01](https://tohfu.github.io/glsl-demo/02_01_simple_texture.html)では、ウインドウサイズを変更した時に、テクスチャの画角が変わってしまいました。
 サイズ固定のcanvasで使うときは問題ないですが、もう少し実用的に使えるように改善してみます。
 
+vertex shader
 ```
-<!-- vertex shaderをここに記述 -->
-<script id="vertexShader" type="x-shader/x-vertex">
-  varying vec2 vUv; // fragment shaderに渡すための変数を定義
+varying vec2 vUv; // fragment shaderに渡すための変数を定義
 
-  void main() {
-    vUv = uv; // 頂点ごとのuv座標を定義
-    gl_Position = vec4(position, 1.0);
-  }
-</script>
-<!-- /vertex shaderをここに記述 -->
+void main() {
+  vUv = uv; // 頂点ごとのuv座標を定義
+  gl_Position = vec4(position, 1.0);
+}
+```
 
-<!-- fragment shaderをここに記述 -->
-<script id="fragmentShader" type="x-shader/x-fragment">
-  varying vec2 vUv;          // テクスチャ座標(vertex shaderから)
+fragment shader
+```
+varying vec2 vUv;          // テクスチャ座標(vertex shaderから)
 
-  uniform vec2 u_resolution; // 画面の解像度
-  uniform sampler2D u_tex;   // テクスチャ
-  uniform vec2 u_texsize;    // テクスチャのサイズ
+uniform vec2 u_resolution; // 画面の解像度
+uniform sampler2D u_tex;   // テクスチャ
+uniform vec2 u_texsize;    // テクスチャのサイズ
 
-  /**
-   * vUvのテクスチャ座標をリサイズ(cover相当)に変換
-   *
-   * @param (res_size) 画面のサイズ
-   * @param (tex_size) テクスチャのサイズ
-   * @param vUvをリサイズした座標
-   */
-  vec2 coverd_texture(vec2 res_size, vec2 tex_size) {
+/**
+ * vUvのテクスチャ座標をリサイズ(cover相当)に変換
+ *
+ * @param (res_size) 画面のサイズ
+ * @param (tex_size) テクスチャのサイズ
+ * @param vUvをリサイズした座標
+ */
+vec2 coverd_texture(vec2 res_size, vec2 tex_size) {
 
-    float aspect_tex = tex_size.x / tex_size.y; // テクスチャのアスペクト比
-    float aspect_res = res_size.x / res_size.y; // 画面領域のアスペクト比
-    float ratio = aspect_res / aspect_tex;      // アスペクト比の比率
+  float aspect_tex = tex_size.x / tex_size.y; // テクスチャのアスペクト比
+  float aspect_res = res_size.x / res_size.y; // 画面領域のアスペクト比
+  float ratio = aspect_res / aspect_tex;      // アスペクト比の比率
 
-    vec2 aspect = vec2( // 拡大率の計算(ここをmaxにしたらcontainっぽくなりますね)
-      min(ratio, 1.0),
-      min(1.0/ratio, 1.0)
-    );
+  vec2 aspect = vec2( // 拡大率の計算(ここをmaxにしたらcontainっぽくなりますね)
+    min(ratio, 1.0),
+    min(1.0/ratio, 1.0)
+  );
 
-    return vec2( // リサイズ＋センタリング
-      vUv.x * aspect.x + (1.0 - aspect.x) * 0.5,
-      vUv.y * aspect.y + (1.0 - aspect.y) * 0.5
-    );
+  return vec2( // リサイズ＋センタリング
+    vUv.x * aspect.x + (1.0 - aspect.x) * 0.5,
+    vUv.y * aspect.y + (1.0 - aspect.y) * 0.5
+  );
 
-  }
+}
 
-  void main() {
+void main() {
 
-    // リサイズ
-    vec2 uv = coverd_texture(u_resolution, u_texsize);
+  // リサイズ
+  vec2 uv = coverd_texture(u_resolution, u_texsize);
 
-    gl_FragColor = texture2D(u_tex, uv);
-  }
-</script>
-<!-- /fragment shaderをここに記述 -->
+  gl_FragColor = texture2D(u_tex, uv);
+}
 ```
 
 GLSL的に新しいことはあまりないのですが、
 ウインドウと、テクスチャ画像のアスペクト比を比較し、x軸とy軸の拡大率に適応しています。
 こんな風に、必要な情報をuniformに詰めて計算に使用する。という流れです。
+
+
+
+## デモ03-01：時間を使ったエフェクト
+
+03_01_effect_by_time_rgb_shifter.html : https://tohfu.github.io/03_01_effect_by_time_rgb_shifter.html
+
