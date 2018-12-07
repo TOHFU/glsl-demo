@@ -64,21 +64,18 @@
       vec2 uv = coverd_texture(u_resolution, u_texsize);
 
       // 0.0~1.0間のノコギリ波を生成
-      // https://qiita.com/edo_m18/items/71f6064f3355be7e4f45
       float t = mod(u_time / 1000.0, 1.0);
 
       // RGBのx軸ずれを定義
       vec3 diff = vec3(0.03 * t, -0.003 * t, -0.045 * t);
 
       // RGBごとにuv座標からずれた点を参照する
-      vec4 color = vec4(
+      gl_FragColor = vec4(
         texture2D(u_tex, uv + vec2(diff.r, 0.0)).r,
         texture2D(u_tex, uv + vec2(diff.g, 0.0)).g,
         texture2D(u_tex, uv + vec2(diff.b, 0.0)).b,
         1.0
       );
-
-      gl_FragColor = color;
     }
   </script>
   <!-- /fragment shaderをここに記述 -->

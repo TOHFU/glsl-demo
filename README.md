@@ -286,7 +286,7 @@ uniform sampler2D u_tex;
 これは、uniform変数といい、CPU(ここではjs)側から汎用的なデータを送ることができます。
 今回は、js側で`THREE.TextureLoader()`という、画像読み込み用のユーティリティ関数を使って読み込んだ画像データを、uniform変数に設定しています。
 
-main.jsの、
+main.js
 ```
 uniforms = {
   u_time       : { type : "f" , value : 1.0 },                        // 時間
@@ -366,6 +366,30 @@ void main() {
 }
 ```
 
+### GLSLのベクトル型について
+
+```
+float aspect_tex = tex_size.x / tex_size.y; // テクスチャのアスペクト比
+float aspect_res = res_size.x / res_size.y; // 画面領域のアスペクト比
+```
+などでvec2(2次元ベクトル)の各要素名の参照を、いきなりx,yという値でしていますが、
+GLSLの特性として、ベクトル型(vec2, vec3, vec4)の各要素にアクセスするための値が用意されています。
+
+基本的には、
+- `.x .y .z .w` ：座標情報を扱う変数の時に使用
+- `.r .g .b .a` ：色情報を扱う変数の時に使用
+- `.s .t .p .q` ：テクスチャ空間座標の時に使用
+が使用できます。
+
+```
+vec4 vector;
+vector[0] = vector.r = vector.x = vector.s;
+vector[1] = vector.g = vector.y = vector.t;
+vector[2] = vector.b = vector.z = vector.p;
+vector[3] = vector.a = vector.w = vector.q;
+```
+みたいな感じで、基本的にどの値を使ってもOKです。コードの可読性を意識して使い分けることができます。
+
 GLSL的に新しいことはあまりないのですが、
 ウインドウと、テクスチャ画像のアスペクト比を比較し、x軸とy軸の拡大率に適応しています。
 こんな風に、必要な情報をuniformに詰めて計算に使用する。という流れです。
@@ -376,7 +400,7 @@ GLSL的に新しいことはあまりないのですが、
 
 03_01_effect_by_time_rgb_shifter.html : https://tohfu.github.io/glsl-demo/03_01_effect_by_time_rgb_shifter.html
 
-今までのデモをもとに、実際にエフェクトを作成してみたいと思います。
+今までのデモをもとに、実際にエフェクト(RGBのずれ)を作成してみたいと思います。
 
 時間によって変化するループアニメーションを作成する場合は、uniform変数で時間情報を送る必要があります。
 
@@ -429,14 +453,12 @@ void main() {
   vec3 diff = vec3(0.03 * t, -0.003 * t, -0.045 * t);
 
   // RGBごとにuv座標からずれた点を参照する
-  vec4 color = vec4(
+  gl_FragColor = vec4(
     texture2D(u_tex, uv + vec2(diff.r, 0.0)).r,
     texture2D(u_tex, uv + vec2(diff.g, 0.0)).g,
     texture2D(u_tex, uv + vec2(diff.b, 0.0)).b,
     1.0
   );
-
-  gl_FragColor = color;
 }
 ```
 
@@ -446,6 +468,23 @@ uniform変数で送られる値はページを開いてからの描画時間な�
 float t = mod(u_time / 1000.0, 1.0);
 ```
 ここで、0.0~1.0までの変化の度合い(イージング)を設定しています。
-[glsl-easings](https://github.com/glslify/glsl-easings) などがわかりやすいと思います。
+[glsl-easings](https://github.com/glslify/glsl-easings)などを参考にすると、わかりやすいと思います。
 
 
+次に、上記で作ったtを元に、
+```
+// RGBのx軸ずれを定義
+vec3 diff = vec3(0.03 * t, -0.003 * t, -0.045 * t);
+```
+RGBごとの座標のずれ情報を決めて、
+
+```
+// RGBごとにuv座標からずれた点を参照する
+gl_FragColor = vec4(
+  texture2D(u_tex, uv + vec2(diff.r, 0.0)).r,
+  texture2D(u_tex, uv + vec2(diff.g, 0.0)).g,
+  texture2D(u_tex, uv + vec2(diff.b, 0.0)).b,
+  1.0
+);
+```
+でRGBごとに、テクスチャの、どの座標を参照するか決めています。
