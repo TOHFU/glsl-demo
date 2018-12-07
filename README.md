@@ -130,7 +130,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // uniform変数を定義
     // ここで定義した変数が、shader内で利用できます
     uniforms = {
-      u_time       : { type : "f" , value : 1.0 },                        // 時間
+      u_time       : { type : "f" , value : 0.0 },                        // 時間
       u_resolution : { type : "v2", value : new THREE.Vector2() },        // 画面の解像度
       u_tex        : { type : "t",  value : texture },                    // テクスチャ
       u_texsize    : { type : "v2", value : new THREE.Vector2(texture.image.width, texture.image.height)}, // テクスチャのサイズ
@@ -374,5 +374,78 @@ GLSL的に新しいことはあまりないのですが、
 
 ## デモ03-01：時間を使ったエフェクト
 
-03_01_effect_by_time_rgb_shifter.html : https://tohfu.github.io/03_01_effect_by_time_rgb_shifter.html
+03_01_effect_by_time_rgb_shifter.html : https://tohfu.github.io/glsl-demo/03_01_effect_by_time_rgb_shifter.html
+
+今までのデモをもとに、実際にエフェクトを作成してみたいと思います。
+
+時間によって変化するループアニメーションを作成する場合は、uniform変数で時間情報を送る必要があります。
+
+main.js
+```
+/**
+ * 描画
+ */
+function render(delta) {
+  uniforms.u_time.value = delta;  // ここで経過時間をuniform変数に指定
+  renderer.render( scene, camera );
+}
+```
+
+vertex shader
+```
+そのままなので省略します
+```
+
+fragment shader
+```
+varying vec2 vUv;          // テクスチャ座標(vertex shaderから)
+
+uniform float u_time;      // 時間
+uniform vec2 u_resolution; // 画面の解像度
+uniform sampler2D u_tex;   // テクスチャ
+uniform vec2 u_texsize;    // テクスチャのサイズ
+
+/**
+ * vUvのテクスチャ座標をリサイズ(cover相当)に変換
+ *
+ * @param (res_size) 画面のサイズ
+ * @param (tex_size) テクスチャのサイズ
+ * @param vUvをリサイズした座標
+ */
+vec2 coverd_texture(vec2 res_size, vec2 tex_size) {
+  // デモ02-02と同じなので省略
+}
+
+void main() {
+
+  // リサイズ
+  vec2 uv = coverd_texture(u_resolution, u_texsize);
+
+  // 0.0~1.0間のノコギリ波を生成
+  // https://qiita.com/edo_m18/items/71f6064f3355be7e4f45
+  float t = mod(u_time / 1000.0, 1.0);
+
+  // RGBのx軸ずれを定義
+  vec3 diff = vec3(0.03 * t, -0.003 * t, -0.045 * t);
+
+  // RGBごとにuv座標からずれた点を参照する
+  vec4 color = vec4(
+    texture2D(u_tex, uv + vec2(diff.r, 0.0)).r,
+    texture2D(u_tex, uv + vec2(diff.g, 0.0)).g,
+    texture2D(u_tex, uv + vec2(diff.b, 0.0)).b,
+    1.0
+  );
+
+  gl_FragColor = color;
+}
+```
+
+uniform変数で送られる値はページを開いてからの描画時間なので、0.0〜1.0間の変化量として扱います。
+```
+// 0.0~1.0間のノコギリ波を生成
+float t = mod(u_time / 1000.0, 1.0);
+```
+ここで、0.0~1.0までの変化の度合い(イージング)を設定しています。
+[glsl-easings](https://github.com/glslify/glsl-easings) などがわかりやすいと思います。
+
 

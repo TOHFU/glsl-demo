@@ -73,7 +73,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // uniform変数を定義
     // ここで定義した変数が、shader内で利用できます
     uniforms = {
-      u_time       : { type : "f" , value : 1.0 },                        // 時間
+      u_time       : { type : "f" , value : 0.0 },                        // 時間
       u_resolution : { type : "v2", value : new THREE.Vector2() },        // 画面の解像度
       u_tex        : { type : "t",  value : texture },                    // テクスチャ
       u_texsize    : { type : "v2", value : new THREE.Vector2(texture.image.width, texture.image.height)}, // テクスチャのサイズ
