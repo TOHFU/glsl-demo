@@ -3,6 +3,9 @@
 view demo page : https://tohfu.github.io/glsl-demo/
 
 
+このデモでは、[three.js](https://threejs.org/)を使っています。
+（もちろん、webGLを直接書いてGLSLを適用、、という方法も取れますが、コンパイルエラーになってしまった時のデバッグなどを考えると圧倒的に楽なので、three.js前提で考えた方が良いと思います。）
+
 
 ## デモ01：板ポリゴンにfragment shaderで色をつけてみる
 
@@ -192,7 +195,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 #### カスタムシェーダーを板ポリゴンに設定する
 
-three.jsでカスタムシェーダーを使うときは、`THREE.ShaderMaterial()`を使います。
+three.jsの基本的なところと、ポリゴンの作成についてはここでは割愛します。
+
+カスタムシェーダーを使うにあたり、three.jsでは、`THREE.ShaderMaterial()`を指定する必要があります。
 
 ```javascript:main.js
 const material = new THREE.ShaderMaterial({
@@ -201,23 +206,23 @@ const material = new THREE.ShaderMaterial({
   fragmentShader : document.getElementById('fragmentShader').textContent // fragment shaderの指定
 });
 ```
-で、htmlの方に記述した各shaderの設定を設定しています。
-uniformsについては、jsからシェーダーに変数を送るための情報(uniform変数といいます)です。これについては後述します。
+で、htmlの方に記述した各shaderの設定をしています。
+uniformsについては、jsからシェーダーに変数を送るための情報です(uniform変数といいます)。これについては後述します。
 
-#### シェーダーの記述場所
+#### シェーダーの記述場所について
 
-基本的には、htmlに記述するのが一般的です。
-javascriptとして処理されないようにするため、`<script id="vertexShader" type="x-shader/x-vertex"></script>`のようなtype指定をして囲っています。
+一般的には、html内のscriptタグ内に記述します。
+javascriptとして処理されないようにするため、`<script id="vertexShader" type="x-shader/x-vertex"></script>`のようなtype指定をしています。
 
-ですが、現実的に案件で使用する時は、管理しずらいと思うので、[Shaderファイルの管理方法 - Qiita](https://qiita.com/mczkzk/items/079c36b6ee3f0a802572)などを利用すると、別ファイル管理できます。
+ですが、現実的に案件で使用する時は、めちゃめちゃ管理しずらいと思いますので、[Shaderファイルの管理方法 - Qiita](https://qiita.com/mczkzk/items/079c36b6ee3f0a802572)などを利用すると、別ファイル管理できます。
 
-ES6で書くのであればヒアドキュメントが使えるので、
+また、ES6で書くのであればヒアドキュメントが使えるので、
 
 ```javascript
 const fshader = `
-void main() {
-  gl_FragColor = vec4(1.0, 0.0, 1.0, 1.0); // ここで各ピクセルに固定の色を指定しています
-}
+  void main() {
+    gl_FragColor = vec4(1.0, 0.0, 1.0, 1.0); // ここで各ピクセルに固定の色を指定しています
+  }
 `;
 ```
 みたいにしちゃうのも良いのかなと思います。
@@ -236,7 +241,7 @@ void main() {
 fragment shader
 ```
 void main() {
-  gl_FragColor = vec4(1.0, 0.0, 1.0, 1.0); // ここで各ピクセルに固定の色を指定しています
+  gl_FragColor = vec4(1.0, 0.0, 1.0, 1.0);
 }
 ```
 としています。
@@ -295,7 +300,7 @@ vertex/fragment shader両方に、
 ```
 varying vec2 vUv;
 ```
-の宣言が増えました。これはvarying変数といい、vertex shader -> fragment shaderで値を渡したいときに使用する変数です。
+の宣言が増えました。これはvarying変数といい、vertex shader -> fragment shaderの間で値を渡したいときに使用する変数です。
 ここでは、attribute変数であるuv(頂点位置に対応するテクスチャ画像の座標)を、vUvというvarying変数にそのまま代入して、fragment shaderに渡しています。
 
 #### uniform変数について
@@ -304,8 +309,8 @@ fragment shader側では、テクスチャ画像を読み込むために以下�
 ```
 uniform sampler2D u_tex;
 ```
-これは、uniform変数といい、CPU(ここではjs)側から汎用的なデータを送ることができます。
-今回は、js側で`THREE.TextureLoader()`という、画像読み込み用のユーティリティ関数を使って読み込んだ画像データを、uniform変数に設定しています。
+これはuniform変数といって、CPU(ここではjs)側から汎用的なデータを渡すための変数です。
+今回は、js側でテクスチャ画像を読み込み（`THREE.TextureLoader()`という、three.jsに用意されている画像読み込み用のユーティリティ関数を使っています）、uniform変数に設定しています。
 
 main.js
 ```javascript:main.js
@@ -317,9 +322,10 @@ uniforms = {
   u_mouse      : { type : "v2", value : new THREE.Vector2() }         // マウス座標
 };
 ```
-で設定した値です。(この後のデモのために、色々設定しています。)
 
-typeは、GLSL側で受け取る型を指定します。
+js側はこんな感じで、オブジェクト形式で指定します。
+
+ちなみに、typeはGLSL側で受け取る型を指定します。
 
 | 値 | 型 |
 |:---|:---|
@@ -329,6 +335,8 @@ typeは、GLSL側で受け取る型を指定します。
 | v3 | THREE.Vector3(3次元ベクトル) |
 | v4 | THREE.Vector4(4次元ベクトル) |
 | t | THREE.Texture(テクスチャ情報) |
+
+がよく使われるものです。
 
 ここで設定したuniform変数を、
 
@@ -346,10 +354,10 @@ const material = new THREE.ShaderMaterial({
 
 #### テクスチャの表示
 
-fragment shader側では、上記座標データ(vUv)と、テクスチャデータ(u_tex)をもとに、どの座標のピクセル色情報をgl_FragColorに設定するか決めています。
+fragment shader側では、上記の座標データ(vUv)と、テクスチャデータ(u_tex)をもとに、どの座標のピクセル色情報をgl_FragColorに設定するか決めています。
 このマッピングは、texture2D(texture, uv)という関数が用意されています。
 
-なんかここまでひたすらお作法ですね。いきなり出てくる変数が多いので、これを知っておかないと、GLSLわかりにくいーってなると思います。
+。。。と、なんかここまでひたすらお作法ですね。いきなり出てくる変数が多いので、これを知っておかないと、GLSLわかりにくいーってなると思います。
 
 
 ----
@@ -442,7 +450,7 @@ vector[3] = vector.a = vector.w = vector.q;
 GLSL的に新しいことはあまりないのですが、
 ウインドウと、テクスチャ画像のアスペクト比を比較し、x軸とy軸の拡大率に適応しています。
 
-こんな風に、必要な情報をuniformに詰めて計算に使用する。という流れです。
+こんな風に、必要な情報をjs側からuniformに詰めてGLSLに渡し、計算に使用する。という流れです。
 
 
 ----
@@ -515,7 +523,7 @@ uniform変数で送られる値はページを開いてからの描画時間な�
 // 0.0~1.0間のノコギリ波を生成
 float t = mod(u_time / 1000.0, 1.0);
 ```
-ここで、0.0~1.0までの変化の度合い(イージング)を設定しています。
+ここで、0.0~1.0までの変化の度合い(いわゆるイージング)を設定しています。
 [glsl-easings](https://github.com/glslify/glsl-easings)などを参考にすると、わかりやすいと思います。
 
 次に、上記で作ったtを元に、
