@@ -5,7 +5,7 @@ view demo page : https://tohfu.github.io/glsl-demo/
 
 このデモでは、[three.js](https://threejs.org/)を使っています。
 
-（もちろん、webGLを直接書いてGLSLを適用、、という方法も取れますが、コンパイルエラーになってしまった時のデバッグなどを考えると圧倒的に楽なので、three.js前提で考えた方が良いと思います。）
+（もちろん、webGLを直接書いてGLSLを適用、、という方法も取れますが、デバッグなど、three.jsを使った方が圧倒的に楽です。）
 
 
 ## デモ01：板ポリゴンにfragment shaderで色をつけてみる
