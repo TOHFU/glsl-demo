@@ -58,11 +58,9 @@ main.js
 ```javascript:main.js
 document.addEventListener('DOMContentLoaded', async () => {
 
-  let container;
   let camera, scene, renderer;
   let uniforms;
 
-  let loader = new THREE.TextureLoader();
   let texture;
 
   // テクスチャの読み込み
@@ -81,6 +79,7 @@ document.addEventListener('DOMContentLoaded', async () => {
    */
   function loadTexture(imagePath) {
     return new Promise(resolve => {
+      const loader = new THREE.TextureLoader();
       loader.setCrossOrigin("anonymous");
       loader.load(imagePath, (tex) => {
           texture = tex;
@@ -96,7 +95,7 @@ document.addEventListener('DOMContentLoaded', async () => {
    * 初期化
    */
   function init() {
-    container = document.getElementById('container');
+    const container = document.getElementById('container');
 
     // カメラを作成
     camera = new THREE.Camera();
@@ -167,7 +166,7 @@ document.addEventListener('DOMContentLoaded', async () => {
    */
   function onPointerMove(event) {
     // uniform変数のマウスポインタ情報を更新
-    let ratio = window.innerHeight / window.innerWidth;
+    const ratio = window.innerHeight / window.innerWidth;
     uniforms.u_mouse.value.x = (event.pageX - window.innerWidth / 2) / window.innerWidth / ratio;
     uniforms.u_mouse.value.y = (event.pageY - window.innerHeight / 2) / window.innerHeight * -1;
   }
