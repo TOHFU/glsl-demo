@@ -300,6 +300,30 @@ uniforms = {
 ```
 で設定した値です。(この後のデモのために、色々設定しています。)
 
+typeは、GLSL側で受け取る方を指定します。
+
+| 値 | 型 |
+|:---|:---|
+| i | int |
+| f | float |
+| v2 | THREE.Vector2(2次元ベクトル) |
+| v3 | THREE.Vector2(3次元ベクトル) |
+| v4 | THREE.Vector2(4次元ベクトル) |
+
+ここで設定したuniform変数を、
+
+main.js
+```
+// 板ポリに貼り付けるマテリアルを作成
+// shaderを利用するときは、ShaderMaterialを使う
+const material = new THREE.ShaderMaterial({
+  uniforms       : uniforms,
+  vertexShader   : document.getElementById('vertexShader').textContent,  // vertex shaderの指定
+  fragmentShader : document.getElementById('fragmentShader').textContent // fragment shaderの指定
+});
+```
+で板ポリのmaterialに指定しています。
+
 #### テクスチャの表示
 
 fragment shader側では、上記座標データ(vUv)と、テクスチャデータ(u_tex)をもとに、どの座標のピクセル色情報をgl_FragColorに設定するか決めています。
