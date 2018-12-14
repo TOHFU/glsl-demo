@@ -10,6 +10,7 @@ view demo page : https://tohfu.github.io/glsl-demo/
 
 01_simple_color.html : https://tohfu.github.io/glsl-demo/01_simple_color.html
 
+01_simple_color.html
 ```html:01_simple_color.html
 <!DOCTYPE html>
 <html lang="en">
@@ -49,9 +50,8 @@ view demo page : https://tohfu.github.io/glsl-demo/
 </html>
 ```
 
-/assets/js/main.js
-
-```
+main.js
+```javascript:main.js
 document.addEventListener('DOMContentLoaded', async () => {
 
   let container;
@@ -194,7 +194,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 three.jsでカスタムシェーダーを使うときは、`THREE.ShaderMaterial()`を使います。
 
-```
+```javascript:main.js
 const material = new THREE.ShaderMaterial({
   uniforms       : uniforms,
   vertexShader   : document.getElementById('vertexShader').textContent,  // vertex shaderの指定
@@ -289,7 +289,7 @@ uniform sampler2D u_tex;
 今回は、js側で`THREE.TextureLoader()`という、画像読み込み用のユーティリティ関数を使って読み込んだ画像データを、uniform変数に設定しています。
 
 main.js
-```
+```javascript:main.js
 uniforms = {
   u_time       : { type : "f" , value : 1.0 },                        // 時間
   u_resolution : { type : "v2", value : new THREE.Vector2() },        // 画面の解像度
@@ -314,7 +314,7 @@ typeは、GLSL側で受け取る型を指定します。
 ここで設定したuniform変数を、
 
 main.js
-```
+```javascript:main.js
 // 板ポリに貼り付けるマテリアルを作成
 // shaderを利用するときは、ShaderMaterialを使う
 const material = new THREE.ShaderMaterial({
@@ -438,7 +438,7 @@ GLSL的に新しいことはあまりないのですが、
 時間によって変化するループアニメーションを作成する場合は、uniform変数で時間情報を送る必要があります。
 
 main.js
-```
+```javascript:main.js
 /**
  * 描画
  */
