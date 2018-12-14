@@ -6,14 +6,11 @@ view demo page : https://tohfu.github.io/glsl-demo/
 
 ## デモ01：板ポリゴンにfragment shaderで色をつけてみる
 
-まずは、上記の板ポリを使って、シェーダーを使ってみるところまで、行ってみます。
-
-ここでは、板ポリゴンを作成しで3D空間上に配置し、これをカメラで撮影したものをcanvasに描画しています。
-この板ポリゴンに、カスタムシェーダーを設定します。
+まずは、板ポリを作成し、最小限のシェーダーを適用してみるところまで、行ってみます。
 
 01_simple_color.html : https://tohfu.github.io/glsl-demo/01_simple_color.html
 
-```
+```html:01_simple_color.html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -189,6 +186,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 });
 ```
+
+板ポリゴンを作成しで3D空間上に配置し、これをカメラで撮影したものをcanvasに描画しています。
+この板ポリゴンに、カスタムシェーダーを設定します。
 
 #### カスタムシェーダーを板ポリゴンに設定する
 
