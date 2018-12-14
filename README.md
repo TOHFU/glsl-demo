@@ -6,9 +6,9 @@ view demo page : https://tohfu.github.io/glsl-demo/
 
 ## デモ01：板ポリゴンにfragment shaderで色をつけてみる
 
-まずは、板ポリを作成し、最小限のシェーダーを適用してみるところまで、行ってみます。
-
 01_simple_color.html : https://tohfu.github.io/glsl-demo/01_simple_color.html
+
+まずは、板ポリを作成し、最小限のシェーダーを適用してみるところまで、行ってみます。
 
 01_simple_color.html
 ```html:01_simple_color.html
@@ -201,7 +201,26 @@ const material = new THREE.ShaderMaterial({
   fragmentShader : document.getElementById('fragmentShader').textContent // fragment shaderの指定
 });
 ```
-で、htmlの方に記述した各shaderの設定と、jsからシェーダーにマウス座標・画像サイズを送るため、カスタム変数(uniform変数：後述)を設定しています。
+で、htmlの方に記述した各shaderの設定を設定しています。
+uniformsについては、jsからシェーダーに変数を送るための情報(uniform変数といいます)です。これについては後述します。
+
+#### シェーダーの記述場所
+
+基本的には、htmlに記述するのが一般的です。
+javascriptとして処理されないようにするため、`<script id="vertexShader" type="x-shader/x-vertex"></script>`のようなtype指定をして囲っています。
+
+ですが、現実的に案件で使用する時は、管理しずらいと思うので、[Shaderファイルの管理方法 - Qiita](https://qiita.com/mczkzk/items/079c36b6ee3f0a802572)などを利用すると、別ファイル管理できます。
+
+ES6で書くのであればヒアドキュメントが使えるので、
+
+```javascript
+const fshader = `
+void main() {
+  gl_FragColor = vec4(1.0, 0.0, 1.0, 1.0); // ここで各ピクセルに固定の色を指定しています
+}
+`;
+```
+みたいにしちゃうのも良いのかなと思います。
 
 #### カスタムシェーダーについて
 
