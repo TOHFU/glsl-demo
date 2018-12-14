@@ -300,15 +300,16 @@ uniforms = {
 ```
 で設定した値です。(この後のデモのために、色々設定しています。)
 
-typeは、GLSL側で受け取る方を指定します。
+typeは、GLSL側で受け取る型を指定します。
 
 | 値 | 型 |
 |:---|:---|
 | i | int |
 | f | float |
 | v2 | THREE.Vector2(2次元ベクトル) |
-| v3 | THREE.Vector2(3次元ベクトル) |
-| v4 | THREE.Vector2(4次元ベクトル) |
+| v3 | THREE.Vector3(3次元ベクトル) |
+| v4 | THREE.Vector4(4次元ベクトル) |
+| t | THREE.Texture(テクスチャ情報) |
 
 ここで設定したuniform変数を、
 
