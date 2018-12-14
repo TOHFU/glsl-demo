@@ -238,6 +238,8 @@ gl_FragColorにはどのピクセルであっても一律`vec4(1.0, 0.0, 1.0, 1.
 このように、fragment shaderのmain()内でどのようなピクセル色情報を返してあげるか、がポイントになります。
 
 
+----
+
 
 ## デモ02-01：板ポリゴンにテクスチャを設定してみる
 
@@ -305,6 +307,8 @@ fragment shader側では、上記座標データ(vUv)と、テクスチャデー
 
 なんかここまでひたすらお作法ですね。いきなり出てくる変数が多いので、これを知っておかないと、GLSLわかりにくいーってなると思います。
 
+
+----
 
 
 ## デモ02-02：テクスチャの画角を固定する(background-size: cover相当に)
@@ -397,12 +401,14 @@ GLSL的に新しいことはあまりないのですが、
 こんな風に、必要な情報をuniformに詰めて計算に使用する。という流れです。
 
 
+----
+
 
 ## デモ03-01：時間を使ったエフェクト
 
 03_01_effect_by_time_rgb_shifter.html : https://tohfu.github.io/glsl-demo/03_01_effect_by_time_rgb_shifter.html
 
-今までのデモをもとに、実際にエフェクト(RGBのずれ)を作成してみたいと思います。
+今までのデモをもとに、実際にエフェクトを作成してみたいと思います。
 
 時間によって変化するループアニメーションを作成する場合は、uniform変数で時間情報を送る必要があります。
 
@@ -433,10 +439,6 @@ uniform vec2 u_texsize;    // テクスチャのサイズ
 
 /**
  * vUvのテクスチャ座標をリサイズ(cover相当)に変換
- *
- * @param (res_size) 画面のサイズ
- * @param (tex_size) テクスチャのサイズ
- * @param vUvをリサイズした座標
  */
 vec2 coverd_texture(vec2 res_size, vec2 tex_size) {
   // デモ02-02と同じなので省略
@@ -472,7 +474,6 @@ float t = mod(u_time / 1000.0, 1.0);
 ここで、0.0~1.0までの変化の度合い(イージング)を設定しています。
 [glsl-easings](https://github.com/glslify/glsl-easings)などを参考にすると、わかりやすいと思います。
 
-
 次に、上記で作ったtを元に、
 ```
 // RGBのx軸ずれを定義
@@ -490,3 +491,60 @@ gl_FragColor = vec4(
 );
 ```
 でRGBごとに、テクスチャの、どの座標を参照するか決めています。
+
+
+
+----
+
+
+## デモ03-02：マウスによるインタラクション
+
+03_02_effect_by_mouse_interaction.html : https://tohfu.github.io/glsl-demo/03_02_effect_by_mouse_interaction.html
+
+最後に、インタラクション要素のあるエフェクトを作ってみます。
+
+
+vertex shader
+```
+そのままなので省略します
+```
+
+fragment shader
+```
+varying vec2 vUv;          // テクスチャ座標(vertex shaderから)
+
+uniform vec2 u_resolution; // 画面の解像度
+uniform sampler2D u_tex;   // テクスチャ
+uniform vec2 u_texsize;    // テクスチャのサイズ
+uniform vec2 u_mouse;      // マウス座標
+
+/**
+ * vUvのテクスチャ座標をリサイズ(cover相当)に変換
+ */
+vec2 coverd_texture(vec2 res_size, vec2 tex_size) {
+  // デモ02-02と同じなので省略
+}
+
+void main() {
+
+  // リサイズ
+  vec2 uv = coverd_texture(u_resolution, u_texsize);
+
+  // 歪曲エフェクト
+  // http://clemz.io/article-retro-shaders-webgl.htmlの、Barrel Distortionが元ネタです
+  float distortion = 0.5;
+  vec2 effect_origin = vec2(u_mouse.x + 0.5, u_mouse.y + 0.5);
+  uv -= effect_origin;
+  uv *= vec2(pow(length(uv), distortion));
+  uv += effect_origin;
+
+  gl_FragColor = texture2D(u_tex, uv);
+}
+```
+
+マウス座標についても、デモ03-01のように、uniform変数で受け渡しをしています。
+
+エフェクトについては、
+[Retro Shaders with WebGL - CLEMZ.IO](http://clemz.io/article-retro-shaders-webgl.html)の、Barrel Distortionが元ネタです。
+詳しい仕組みについては、このページに詳しく載っているので、参照してみてください。
+（その他、基本的なエフェクトの例が乗っていますので、良いアイディアになると思います！）
