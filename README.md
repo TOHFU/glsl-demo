@@ -58,7 +58,7 @@ view demo page : https://tohfu.github.io/glsl-demo/
   <!-- /fragment shaderをここに記述 -->
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/98/three.min.js"></script>
-  <script src="./assets/js/main_01.js"></script>
+  <script src="./assets/js/main.js"></script>
 </body>
 
 </html>
