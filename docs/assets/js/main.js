@@ -59,7 +59,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     window.addEventListener('resize', onWindowResize, false);
 
     // マウス移動イベント
-    document.addEventListener('pointermove', onPointerMove, true);
+    if (window.PointerEvent) {
+      document.addEventListener('pointermove', onPointerMove, true);
+    } else {
+      document.addEventListener('touchmove', onPointerMove, true);
+      document.addEventListener('mousemove', onPointerMove, true);
+    }
   }
 
   /**
