@@ -234,6 +234,8 @@ three.jsで定義されているので、詳しくは [Built-in uniforms and att
 
 ## デモ02-01：板ポリゴンにテクスチャを貼り付ける
 
+<img src="https://github.com/TOHFU/glsl-demo/blob/master/figure/figure01.png" width="320px">
+
 [デモページ](https://tohfu.github.io/glsl-demo/02_01_simple_texture.html)
 
 次に、この板ポリゴンにテクスチャを貼り付けてみます。
@@ -365,6 +367,8 @@ fragment shader側では、上記の座標データ(vUv)と、テクスチャデ
 
 ## デモ02-02：テクスチャの画角を固定する(background-size: cover相当に)
 
+<img src="https://github.com/TOHFU/glsl-demo/blob/master/figure/figure02.png" width="320px">
+
 [デモページ](https://tohfu.github.io/glsl-demo/02_02_simple_texture_scaled.html)
 
 先ほどの[デモ02-01](https://tohfu.github.io/glsl-demo/02_01_simple_texture.html)では、ウインドウサイズを変更した時に、テクスチャの画角が変わってしまいました。
@@ -487,6 +491,8 @@ vector[3] = vector.a = vector.w = vector.q;
 
 ## デモ03-01：時間を使ったエフェクト
 
+<img src="https://github.com/TOHFU/glsl-demo/blob/master/figure/figure03.png" width="320px">
+
 [デモページ](https://tohfu.github.io/glsl-demo/03_01_effect_by_time_rgb_shifter.html)
 
 今までのデモをもとに、実際にアニメーションするエフェクトを作成してみたいと思います。
@@ -600,6 +606,8 @@ float t = mod(u_time / 1000.0, 1.0);
 
 
 ## デモ03-02：マウスによるインタラクション
+
+<img src="https://github.com/TOHFU/glsl-demo/blob/master/figure/figure04.png" width="320px">
 
 [デモページ](https://tohfu.github.io/glsl-demo/03_02_effect_by_mouse_interaction.html)
 
