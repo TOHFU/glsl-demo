@@ -1,4 +1,8 @@
-document.addEventListener('DOMContentLoaded', async () => {
+document.addEventListener('DOMContentLoaded', init);
+
+async function init() {
+
+  const container = document.getElementById('container');
 
   let camera, scene, renderer;
   let uniforms;
@@ -8,8 +12,32 @@ document.addEventListener('DOMContentLoaded', async () => {
   // テクスチャの読み込み
   await loadTexture('./assets/img/lena_std.jpg');
 
-  // 初期化
-  init();
+  // カメラを作成
+  camera = new THREE.Camera();
+  camera.position.z = 1;
+
+  // シーンを作成
+  scene = new THREE.Scene();
+
+  // 板ポリゴンのメッシュをシーンに追加
+  scene.add(createPlaneMesh());
+
+  // レンダラーを作成
+  renderer = new THREE.WebGLRenderer();
+  renderer.setPixelRatio(window.devicePixelRatio);
+  container.appendChild(renderer.domElement);
+
+  // リサイズイベント
+  onWindowResize();
+  window.addEventListener('resize', onWindowResize, false);
+
+  // マウス移動イベント
+  if (window.PointerEvent) {
+    document.addEventListener('pointermove', onPointerMove, true);
+  } else {
+    document.addEventListener('touchmove', onPointerMove, true);
+    document.addEventListener('mousemove', onPointerMove, true);
+  }
 
   // アニメーション
   animate();
@@ -17,7 +45,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   /**
    * テクスチャの読み込み
    *
-   * @param imagePath 画像のパス
+   * @param {string} imagePath 画像のパス
    */
   function loadTexture(imagePath) {
     return new Promise(resolve => {
@@ -34,41 +62,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   /**
-   * 初期化
-   */
-  function init() {
-    const container = document.getElementById('container');
-
-    // カメラを作成
-    camera = new THREE.Camera();
-    camera.position.z = 1;
-
-    // シーンを作成
-    scene = new THREE.Scene();
-
-    // 板ポリゴンのメッシュをシーンに追加
-    scene.add(createPlaneMesh());
-
-    renderer = new THREE.WebGLRenderer();
-    renderer.setPixelRatio(window.devicePixelRatio);
-
-    container.appendChild(renderer.domElement);
-
-    // リサイズイベント
-    onWindowResize();
-    window.addEventListener('resize', onWindowResize, false);
-
-    // マウス移動イベント
-    if (window.PointerEvent) {
-      document.addEventListener('pointermove', onPointerMove, true);
-    } else {
-      document.addEventListener('touchmove', onPointerMove, true);
-      document.addEventListener('mousemove', onPointerMove, true);
-    }
-  }
-
-  /**
    * 板ポリゴンを作成
+   *
+   * @return {Object} メッシュオブジェクト
    */
   function createPlaneMesh() {
     // 2x2の板ポリゴンを作成
@@ -99,6 +95,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   /**
    * 画面のリサイズ
+   *
+   * @param event
    */
   function onWindowResize(event) {
     // リサイズ
@@ -110,6 +108,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   /**
    * マウスポインタ一の取得(画面左下が原点)
+   *
+   * @param event
    */
   function onPointerMove(event) {
     // uniform変数のマウスポインタ情報を更新
@@ -120,6 +120,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   /**
    * アニメーション
+   *
+   * @param delta
    */
   function animate(delta) {
     requestAnimationFrame( animate );
@@ -128,10 +130,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   /**
    * 描画
+   *
+   * @param delta
    */
   function render(delta) {
     uniforms.u_time.value = delta;
     renderer.render( scene, camera );
   }
 
-});
+};
