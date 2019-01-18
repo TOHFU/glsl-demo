@@ -695,4 +695,4 @@ void main() {
 エフェクトについては、
 [Retro Shaders with WebGL - CLEMZ.IO](http://clemz.io/article-retro-shaders-webgl.html)の、Barrel Distortionが元ネタです。
 詳しい仕組みについては、このページに詳しく載っているので、参照してみてください。
-（その他、基本的なエフェクトの例が乗っていますので、良いアイディアになると思います！）
+（その他、色々なエフェクトの例が載っているので、良いアイディアになると思います!！）
